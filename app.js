@@ -17,7 +17,10 @@ const ejsMate = require('ejs-mate');
 const wrapAsyncError = require('./utils/wrapAsyncError');
 const ExpressError = require('./utils/ExpressError');
 const Joi = require('joi');
-const { campgroundValidationSchema, reviewValidationSchema } = require('./schemas.js');
+const {
+    campgroundValidationSchema,
+    reviewValidationSchema
+} = require('./schemas.js');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const mongoSanitize = require('express-mongo-sanitize');
@@ -33,8 +36,8 @@ const atlasUrl = process.env.dbURL;
 const mongoUrl = 'mongodb://localhost:27017/yelpCamp';
 const dbUrl = atlasUrl || mongoUrl;
 mongoose.connect(dbUrl, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
     })
     .then(() => {
         console.log("connected to mongo successfully!!".cyan)
@@ -47,14 +50,14 @@ const secret = process.env.SECRET || 'random-secret';
 const store = new MongoStore({
     mongoUrl: mongoUrl,
     secret,
-    touchAfter:24*60*60
+    touchAfter: 24 * 60 * 60
 })
 store.on('error', function (e) {
     console.log('error with session store!!'.red);
 })
 const configSession = {
     store,
-    name:'my-session',
+    name: 'my-session',
     secret,
     resave: false,
     saveUninitialized: true,
@@ -62,7 +65,7 @@ const configSession = {
         httpOnly: true,
         // secure:true,
         expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
-        maxAge:1000*60*60*24*7
+        maxAge: 1000 * 60 * 60 * 24 * 7
     }
 }
 
@@ -73,7 +76,9 @@ app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({
+    extended: true
+}));
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(methodOverride('_method'));
 app.use(helmet())
@@ -127,9 +132,9 @@ app.use(
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session(configSession));
 app.use(
-  mongoSanitize({
-    replaceWith: '_',
-  }),
+    mongoSanitize({
+        replaceWith: '_',
+    }),
 );
 
 app.use(flash());
@@ -242,9 +247,13 @@ app.get('*', (req, res, next) => {
 })
 
 app.use((err, req, res, next) => {
-    const { statusCode = 500 } = err;
+    const {
+        statusCode = 500
+    } = err;
     if (!err.message) err.message = 'Something went wrong';
-    res.status(statusCode).render('error', { err });
+    res.status(statusCode).render('error', {
+        err
+    });
 })
 
 const port = process.env.PORT || 3000;
